@@ -4,9 +4,10 @@ import numpy as np
 from keras.models import *
 from keras.layers import Input, Conv2D, MaxPooling2D,  Conv2DTranspose, Lambda
 from keras.optimizers import *
-from keras.callbacks import ModelCheckpoint, TensorBoard
+from keras.callbacks import TensorBoard
 from keras.preprocessing.image import array_to_img, img_to_array
 import keras as k
+from keras import backend as K
 import glob
 import data
 import math
@@ -24,13 +25,22 @@ from keras.preprocessing.image import img_to_array, load_img
 import keras
 import gdal
 
+from datetime import datetime
+
+from keras.models import Model
+from keras.models import load_model
+from keras.optimizers import Adam
+from keras.layers import Input, Conv2D, Activation
+from keras.layers.merge import Concatenate
+
 
 class STSCNN(object):
-    def __init__(self, img_rows = 512, img_cols = 512):
+    def __init__(self, img_rows = 512, img_cols = 512, weight_filepath=None):
         self.img_rows = img_rows
         self.img_cols = img_cols
         self.model = self.STSNet()
         self.current_epoch = 0
+        self.weight_filepath = weight_filepath
 
 
     def STSNet(self):
@@ -99,3 +109,33 @@ class STSCNN(object):
             # Save logfile
             if self.weight_filepath:
                 self.save()
+
+    def predict(self, sample):
+        """Run prediction using this model"""
+        return self.model.predict(sample)
+
+    def summary(self):
+        """Get summary of the UNet model"""
+        print(self.model.summary())
+
+    def save(self):
+        self.model.save_weights(self.current_weightfile())
+
+    def load(self, filepath, train_bn=True, lr=0.0002):
+
+        # Create UNet-like model
+        self.model = self.build_pconv_unet(train_bn, lr)
+
+        # Load weights into model
+        epoch = int(os.path.basename(filepath).split("_")[0])
+        assert epoch > 0, "Could not parse weight file. Should start with 'X_', with X being the epoch"
+        self.current_epoch = epoch
+        self.model.load_weights(filepath)
+
+    def current_weightfile(self):
+        assert self.weight_filepath != None, 'Must specify location of logs'
+        return self.weight_filepath + "{}_weights_{}.h5".format(self.current_epoch, self.current_timestamp())
+
+    @staticmethod
+    def current_timestamp():
+        return datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
