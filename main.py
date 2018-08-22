@@ -181,18 +181,17 @@ def plot_callback(model):
         plt.savefig(r'D:\STSCNN\test_samples\img_{}_{}.png'.format(i, pred_time))
         plt.close()
 
-model = STSCNN()
-callback_loss = ModelCheckpoint('checkpoint4.{epoch:02d}-{val_loss:.2f}.hdf5', monitor='loss', verbose=1, save_best_only=True)
-callback_tensorboard = TensorBoard(log_dir='F:/STSCNN/log', write_graph=True)
+model = STSCNN(weight_filepath='D:/STSCNN/logs/')
 
 model.fit(
     train_generator,
-    steps_per_epoch=100,
+    steps_per_epoch=10,
     validation_data=val_generator,
     validation_steps=100,
     epochs=50,
     plot_callback=plot_callback,
     callbacks=[
-        TensorBoard(log_dir='F:/STSCNN/logs/initial_training', write_graph=False)
+        TensorBoard(log_dir='D:/STSCNN/logs/initial_training', write_graph=False)
     ]
+)
 )
