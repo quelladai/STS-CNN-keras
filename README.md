@@ -11,7 +11,6 @@ Tensorflow 1.8
 The file 'model.py' is the model in the paper.
 
 Use the original image as the label and the temporal information, add the mask to the original images to generate the masked images, After two epoch, the result is as follow:
-
-      STS-CNN-keras/result/img_1_2018-08-23-14-23-38.png
+ ![image](https://github.com/quelladai/STS-CNN-keras/blob/master/result/img_1_2018-08-23-14-23-38.png)
     
 
