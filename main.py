@@ -56,13 +56,14 @@ class DataGenerator(ImageDataGenerator):
 
             masked = next(masked_generator)
 
-            temporal_generator = datagen.flow_from_directory(
-                temporal_DIR,
-                batch_size=BATCH_SIZE,
-                target_size=(512, 512),
-                class_mode=None,
-                seed=1)
-            temporal = next(temporal_generator)
+            # temporal_generator = datagen.flow_from_directory(
+            #     temporal_DIR,
+            #     batch_size=BATCH_SIZE,
+            #     target_size=(512, 512),
+            #     class_mode=None,
+            #     seed=1)
+            # temporal = next(temporal_generator)
+            temporal = deepcopy(ori)
 
             gc.collect()
             yield [masked, temporal], ori
@@ -85,9 +86,7 @@ class DataGenerator_val(ImageDataGenerator):
         while True:
             ori = next(generator)
 
-            data_gen_args = dict(
-                                 rescale=1. / 255,
-                                 )
+            data_gen_args = dict(rescale=1. / 255)
             datagen = ImageDataGenerator(**data_gen_args)
             masked_generator = datagen.flow_from_directory(
                 val_masked_DIR,
@@ -98,21 +97,20 @@ class DataGenerator_val(ImageDataGenerator):
 
             masked = next(masked_generator)
 
-            temporal_generator = datagen.flow_from_directory(
-                val_temporal_DIR,
-                batch_size=BATCH_SIZE,
-                target_size=(512, 512),
-                class_mode=None,
-                seed=1)
-            temporal = next(temporal_generator)
+            # temporal_generator = datagen.flow_from_directory(
+            #     val_temporal_DIR,
+            #     batch_size=BATCH_SIZE,
+            #     target_size=(512, 512),
+            #     class_mode=None,
+            #     seed=1)
+            # temporal = next(temporal_generator)
+            temporal = deepcopy(ori)
 
             gc.collect()
             yield [masked, temporal], ori
 
 
-val_datagen = DataGenerator_val(
-    rescale=1. / 255,
-)
+val_datagen = DataGenerator_val(rescale=1. / 255)
 val_generator = val_datagen.flow_from_directory(
     val_label_DIR, target_size=(512, 512),batch_size=BATCH_SIZE,seed=1
 )
@@ -123,9 +121,7 @@ class DataGenerator_test(ImageDataGenerator):
         while True:
             ori = next(generator)
 
-            data_gen_args = dict(
-                                 rescale=1. / 255,
-                                 )
+            data_gen_args = dict(rescale=1. / 255)
             datagen = ImageDataGenerator(**data_gen_args)
             masked_generator = datagen.flow_from_directory(
                 test_masked_DIR,
@@ -136,21 +132,20 @@ class DataGenerator_test(ImageDataGenerator):
 
             masked = next(masked_generator)
 
-            temporal_generator = datagen.flow_from_directory(
-                test_temporal_DIR,
-                batch_size=BATCH_SIZE,
-                target_size=(512, 512),
-                class_mode=None,
-                seed=1)
-            temporal = next(temporal_generator)
+            # temporal_generator = datagen.flow_from_directory(
+            #     test_temporal_DIR,
+            #     batch_size=BATCH_SIZE,
+            #     target_size=(512, 512),
+            #     class_mode=None,
+            #     seed=1)
+            # temporal = next(temporal_generator)
+            temporal = deepcopy(ori)
 
             gc.collect()
             yield [masked, temporal], ori
 
 
-test_datagen = DataGenerator_test(
-    rescale=1. / 255,
-)
+test_datagen = DataGenerator_test(rescale=1. / 255)
 test_generator = test_datagen.flow_from_directory(
     test_label_DIR, target_size=(512, 512),batch_size=BATCH_SIZE,seed=1
 )
@@ -185,13 +180,12 @@ model = STSCNN(weight_filepath='D:/STSCNN/logs/')
 
 model.fit(
     train_generator,
-    steps_per_epoch=10,
+    steps_per_epoch=1000,
     validation_data=val_generator,
     validation_steps=100,
-    epochs=50,
+    epochs=500,
     plot_callback=plot_callback,
     callbacks=[
         TensorBoard(log_dir='D:/STSCNN/logs/initial_training', write_graph=False)
     ]
-)
 )
