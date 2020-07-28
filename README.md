@@ -2,7 +2,7 @@
 
 The Keras implemention of "Missing Data Reconstruction in Remote Sensing Image With a Unified Spatial–Temporal–Spectral Deep Convolutional Neural Network", https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8316243.
 
-It is just an unofficial pytorch implementation of the paper, i just finish it but didn't test the result.
+It is just an unofficial keras implementation of the paper, i just finish it but didn't test the result.
 
 Python 3.6
 Keras 2.2.0
